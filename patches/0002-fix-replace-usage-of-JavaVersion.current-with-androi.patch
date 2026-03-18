@@ -1,0 +1,131 @@
+From db5b23b30fe1ecffa163ed7ddf5e1b913c03b39e Mon Sep 17 00:00:00 2001
+From: Akash Yadav <contact@itsaky.com>
+Date: Wed, 11 Mar 2026 16:41:22 +0530
+Subject: [PATCH 2/7] fix: replace usage of JavaVersion.current() with
+ androidJavaVersion()
+
+JavaVersion.current() tries to use system properties like 'java.version' and 'java.runtime.version'
+which are either unavailable on Android, or are set to 0. This makes JavaVersion.current() fail when
+it is queried.
+
+We resolve this by replacing usage of JavaVersion.current() with the newly-introduced
+androidJavaVersion() function, which checks for Android version and returns JavaVersion instance
+based on Java features available in that version of Android. If the runtime is non-ART, it falls
+back to the usual JavaVersion.current() path to ensure compatibility with existing code.
+
+Signed-off-by: Akash Yadav <contact@itsaky.com>
+---
+ .../cli/jvm/modules/javaVersionUtils.kt       |  3 ++-
+ .../JvmEnvironmentConfigurator.kt             |  3 ++-
+ .../kotlin/test/KotlinTestUtils.java          |  3 ++-
+ .../jetbrains/kotlin/utils/JavaVersionUtil.kt | 26 +++++++++++++++++++
+ .../org/jetbrains/kotlin/utils/KotlinPaths.kt |  4 +--
+ 5 files changed, 34 insertions(+), 5 deletions(-)
+ create mode 100644 compiler/util/src/org/jetbrains/kotlin/utils/JavaVersionUtil.kt
+
+diff --git a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/javaVersionUtils.kt b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/javaVersionUtils.kt
+index 00f375e5a091..bd21c23de942 100644
+--- a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/javaVersionUtils.kt
++++ b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/javaVersionUtils.kt
+@@ -6,7 +6,8 @@
+ package org.jetbrains.kotlin.cli.jvm.modules
+ 
+ import com.intellij.util.lang.JavaVersion
++import org.jetbrains.kotlin.utils.currentJavaVersion
+ 
+ fun isAtLeastJava9(): Boolean {
+-    return JavaVersion.current() >= JavaVersion.compose(9)
++    return currentJavaVersion() >= JavaVersion.compose(9)
+ }
+diff --git a/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JvmEnvironmentConfigurator.kt b/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JvmEnvironmentConfigurator.kt
+index b5afd9e8241c..9a37947acbfc 100644
+--- a/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JvmEnvironmentConfigurator.kt
++++ b/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JvmEnvironmentConfigurator.kt
+@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+ import org.jetbrains.kotlin.test.util.KtTestUtil
+ import org.jetbrains.kotlin.test.util.joinToArrayString
+ import org.jetbrains.kotlin.utils.addToStdlib.runIf
++import org.jetbrains.kotlin.utils.currentJavaVersion
+ import java.io.File
+ 
+ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+@@ -147,7 +148,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
+             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
+             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
+             TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
+-                runIf(JavaVersion.current() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
++                runIf(currentJavaVersion() >= JavaVersion.compose(9)) { File(System.getProperty("java.home")) }
+             }
+         }
+ 
+diff --git a/compiler/tests-common/testFixtures/org/jetbrains/kotlin/test/KotlinTestUtils.java b/compiler/tests-common/testFixtures/org/jetbrains/kotlin/test/KotlinTestUtils.java
+index 1efa99b5e374..987d00136a71 100644
+--- a/compiler/tests-common/testFixtures/org/jetbrains/kotlin/test/KotlinTestUtils.java
++++ b/compiler/tests-common/testFixtures/org/jetbrains/kotlin/test/KotlinTestUtils.java
+@@ -64,6 +64,7 @@ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ 
+ import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
++import static org.jetbrains.kotlin.utils.JavaVersionUtilKt.currentJavaVersion;
+ 
+ public class KotlinTestUtils {
+     public static final String ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT = "Actual data differs from file content";
+@@ -189,7 +190,7 @@ public class KotlinTestUtils {
+         else if (jdkKind == TestJdkKind.FULL_JDK_21) {
+             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk21Home());
+         }
+-        else if (JavaVersion.current().compareTo(JavaVersion.compose(9)) >= 0) {
++        else if (currentJavaVersion().compareTo(JavaVersion.compose(9)) >= 0) {
+             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
+         }
+ 
+diff --git a/compiler/util/src/org/jetbrains/kotlin/utils/JavaVersionUtil.kt b/compiler/util/src/org/jetbrains/kotlin/utils/JavaVersionUtil.kt
+new file mode 100644
+index 000000000000..7fa8aa09ad5b
+--- /dev/null
++++ b/compiler/util/src/org/jetbrains/kotlin/utils/JavaVersionUtil.kt
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
++ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
++ */
++
++package org.jetbrains.kotlin.utils
++
++import com.intellij.util.lang.JavaVersion
++
++private val androidJavaVersion by lazy { androidJavaVersion() }
++
++fun currentJavaVersion(): JavaVersion =
++    androidJavaVersion ?: JavaVersion.current()
++
++fun androidJavaVersion(): JavaVersion? =
++    runCatching {
++        val buildClass = Class.forName($$"android.os.Build$VERSION")
++        val sdkInt = buildClass.getField("SDK_INT").getInt(null)
++        val featureVersion = when {
++            sdkInt >= 34 -> 17
++            sdkInt >= 31 -> 11
++            else -> 8
++        }
++
++        JavaVersion.compose(featureVersion)
++    }.getOrNull()
+diff --git a/compiler/util/src/org/jetbrains/kotlin/utils/KotlinPaths.kt b/compiler/util/src/org/jetbrains/kotlin/utils/KotlinPaths.kt
+index 8e0934daba6d..04bd822d4a8d 100644
+--- a/compiler/util/src/org/jetbrains/kotlin/utils/KotlinPaths.kt
++++ b/compiler/util/src/org/jetbrains/kotlin/utils/KotlinPaths.kt
+@@ -114,8 +114,8 @@ interface KotlinPaths {
+         Empty(),
+         StdLib(Jar.StdLib, gen = {
+             when {
+-                JavaVersion.current() >= JavaVersion.compose(8) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
+-                JavaVersion.current() >= JavaVersion.compose(7) -> listOf(Jar.StdLibJdk7)
++                currentJavaVersion() >= JavaVersion.compose(8) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
++                currentJavaVersion() >= JavaVersion.compose(7) -> listOf(Jar.StdLibJdk7)
+                 else -> emptyList()
+             }
+         }),
+-- 
+2.53.0
+

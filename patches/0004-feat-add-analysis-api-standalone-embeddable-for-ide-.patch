@@ -1,0 +1,125 @@
+From 473cbbdaf7da4f3dfd1e3295280353d32b129683 Mon Sep 17 00:00:00 2001
+From: Akash Yadav <contact@itsaky.com>
+Date: Fri, 13 Mar 2026 19:14:18 +0530
+Subject: [PATCH 4/7] feat: add analysis-api-standalone-embeddable-for-ide
+ module
+
+Signed-off-by: Akash Yadav <contact@itsaky.com>
+---
+ build.gradle.kts                              |  1 +
+ .../build.gradle.kts                          | 78 +++++++++++++++++++
+ settings.gradle                               |  1 +
+ 3 files changed, 80 insertions(+)
+ create mode 100644 prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
+
+diff --git a/build.gradle.kts b/build.gradle.kts
+index d0fcfad11e34..e533405d2674 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -495,6 +495,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
+     ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
+     ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
+     ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
++    ":prepare:ide-plugin-dependencies:analysis-api-standalone-embeddable-for-ide",
+     ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
+     ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
+     ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
+diff --git a/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts b/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
+new file mode 100644
+index 000000000000..cb6cc097db17
+--- /dev/null
++++ b/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
+@@ -0,0 +1,78 @@
++import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
++
++plugins {
++    kotlin("jvm")
++}
++
++val intellijVersion = rootProject.extra["versions.intellijSdk"]
++
++val embeddableJar = configurations.getOrCreate("embeddableJar").apply {
++    isCanBeConsumed = false
++    isCanBeResolved = true
++    attributes {
++        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
++        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
++    }
++
++    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
++    exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-core")
++}
++
++dependencies {
++    embeddableJar(intellijCore())
++    embeddableJar(libs.intellij.fastutil)
++    embeddableJar(commonDependency("com.fasterxml:aalto-xml"))
++    embeddableJar(project(":analysis:analysis-api-standalone:analysis-api-standalone-base",))
++    embeddableJar(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",))
++    embeddableJar(project(":analysis:analysis-api-standalone",))
++}
++
++val packagesToRelocate =
++    listOf(
++        "com.google",
++        "com.sampullara",
++        "org.apache",
++        "org.jdom",
++        "org.picocontainer",
++        "org.jline",
++        "org.fusesource",
++        "net.jpountz",
++        "it.unimi.dsi.fastutil",
++        "javax.annotation",
++        "kotlinx.collections.immutable",
++        "com.fasterxml",
++        "org.codehaus",
++        "io.opentelemetry",
++        "io.vavr",
++    )
++
++tasks.register<ShadowJar>("embeddable") {
++    destinationDirectory.set(project.layout.buildDirectory.dir("libs"))
++    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
++    configurations = listOf(embeddableJar)
++
++    relocate("com.google.protobuf", "org.jetbrains.kotlin.protobuf")
++    relocate("com.intellij", "$kotlinEmbeddableRootPackage.com.intellij") {
++        // These are not real packages, but important string constants which are used by xml-reader.
++        exclude("com.intellij.projectService")
++        exclude("com.intellij.applicationService")
++    }
++
++    packagesToRelocate.forEach {
++        relocate(it, "$kotlinEmbeddableRootPackage.$it")
++    }
++
++    relocate("javax.inject", "$kotlinEmbeddableRootPackage.javax.inject")
++    relocate("org.fusesource", "$kotlinEmbeddableRootPackage.org.fusesource") {
++        // TODO: remove "it." after #KT-12848 get addressed
++        exclude("org.fusesource.jansi.internal.CLibrary")
++    }
++
++    relocate("javax.xml", "jaxp.xml")
++
++    exclude("org/checkerframework/**",)
++    exclude("org/intellij/lang/annotations",)
++    exclude("com/sun/jna/**")
++    exclude("org/jetbrains/annotations/**")
++    mergeServiceFiles()
++}
+diff --git a/settings.gradle b/settings.gradle
+index 419121b404d4..fe82972cc9f7 100644
+--- a/settings.gradle
++++ b/settings.gradle
+@@ -511,6 +511,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
+             ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
+             ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
+             ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
++            ":prepare:ide-plugin-dependencies:analysis-api-standalone-embeddable-for-ide",
+             ":prepare:ide-plugin-dependencies:kotlin-compiler-ir-for-ide",
+             ":prepare:ide-plugin-dependencies:kotlin-compiler-common-for-ide",
+             ":prepare:ide-plugin-dependencies:kotlin-compiler-fe10-for-ide",
+-- 
+2.53.0
+

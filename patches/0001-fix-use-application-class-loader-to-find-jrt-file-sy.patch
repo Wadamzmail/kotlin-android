@@ -1,0 +1,29 @@
+From 9c8c38557dcef9184e6f90a96db1affdd88ae5f2 Mon Sep 17 00:00:00 2001
+From: Akash Yadav <contact@itsaky.com>
+Date: Wed, 11 Mar 2026 16:39:54 +0530
+Subject: [PATCH 1/7] fix: use application class loader to find jrt:/ file
+ system
+
+The JRT file system is not available on Android. It needs to be part of the application. To ensure Kotlin's CoreJrtFileSystem can find that file system, we need to make it use the application class loader so that it finds the jrt:/ file system in the application's classes, not in the system's loader
+
+Signed-off-by: Akash Yadav <contact@itsaky.com>
+---
+ .../org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
+index 335a4db84c47..c399ca5bca10 100644
+--- a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
++++ b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
+@@ -83,7 +83,7 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
+             if (isAtLeastJava9()) {
+                 // If the runtime JDK is set to 9+ it has JrtFileSystemProvider,
+                 // but to load proper jrt-fs (one that is pointed by jdkHome) we should provide "java.home" path
+-                FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
++                FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath), CoreJrtFileSystem::class.java.classLoader)
+             } else {
+                 val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
+                 // If the runtime JDK is set to <9, there are no JrtFileSystemProvider,
+-- 
+2.53.0
+

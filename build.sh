@@ -19,9 +19,8 @@ JAR_PATH=$(find prepare/ide-plugin-dependencies -name "analysis-api-standalone-e
 
 [[ -f "$JAR_PATH" ]] || fail "JAR not found"
 
+cp "$JAR_PATH" "$OUT/"
+
 popd # kotlin-src
 
-mkdir -p ../outputs
-cp "$JAR_PATH" ../outputs/
-
-log_success "Copied JAR to outputs/"
+log_success "Copied JAR to $OUT/"

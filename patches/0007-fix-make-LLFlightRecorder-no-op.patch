@@ -1,4 +1,4 @@
-From 56f65f11a2c9826bfaf5ba312a4f847074b7581c Mon Sep 17 00:00:00 2001
+From 2dfdb3c109001b6a7408193a3010f2223b8ab130 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <akashyadav@appdevforall.org>
 Date: Wed, 18 Mar 2026 21:44:04 +0530
 Subject: [PATCH 7/7] fix: make LLFlightRecorder no-op
@@ -7,11 +7,11 @@ jdk.jfr is not available on Android.
 
 Signed-off-by: Akash Yadav <akashyadav@appdevforall.org>
 ---
- .../level/api/fir/util/LLFlightRecorder.kt    | 429 +++++++++---------
- 1 file changed, 215 insertions(+), 214 deletions(-)
+ .../level/api/fir/util/LLFlightRecorder.kt    | 430 +++++++++---------
+ 1 file changed, 216 insertions(+), 214 deletions(-)
 
 diff --git a/analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/util/LLFlightRecorder.kt b/analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/util/LLFlightRecorder.kt
-index 9e5ddbfc447a..d74e10f5c029 100644
+index 9e5ddbfc447a..781a3ad32a0a 100644
 --- a/analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/util/LLFlightRecorder.kt
 +++ b/analysis/low-level-api-fir/src/org/jetbrains/kotlin/analysis/low/level/api/fir/util/LLFlightRecorder.kt
 @@ -5,7 +5,7 @@
@@ -191,7 +191,7 @@ index 9e5ddbfc447a..d74e10f5c029 100644
  
      /**
       * Notify that the current thread acknowledged the [declaration] is either finished analyzing up to [phase],
-@@ -183,19 +184,19 @@ object LLFlightRecorder {
+@@ -183,19 +184,20 @@ object LLFlightRecorder {
       * @param phase The phase the [declaration] is being analyzed to.
       */
      internal fun phaseSuspension(declaration: FirElementWithResolveState, requestedPhase: FirResolvePhase): LLPhaseSuspensionEventCompleter? {
@@ -215,6 +215,7 @@ index 9e5ddbfc447a..d74e10f5c029 100644
 +        // ).apply {
 +        //     begin()
 +        // }
++        return null
      }
  
 -    private val stopWorldInvalidationEventType = EventType.getEventType(LLStopWorldInvalidation::class.java)
@@ -222,7 +223,7 @@ index 9e5ddbfc447a..d74e10f5c029 100644
  
      /**
       * Notify that a stop-the-world session invalidation has been scheduled.
-@@ -212,11 +213,11 @@ object LLFlightRecorder {
+@@ -212,11 +214,11 @@ object LLFlightRecorder {
      }
  
      private fun stopWorldSessionInvalidation(newState: Boolean) {
@@ -238,7 +239,7 @@ index 9e5ddbfc447a..d74e10f5c029 100644
      }
  
      private fun name(declaration: FirElementWithResolveState): String {
-@@ -318,143 +319,143 @@ internal interface LLPhaseEventCompleter {
+@@ -318,143 +320,143 @@ internal interface LLPhaseEventCompleter {
      fun notifyCompletedWithFailure(throwable: Throwable)
  }
  

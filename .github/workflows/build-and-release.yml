@@ -8,6 +8,10 @@ on:
       - '*'
   workflow_dispatch: {}
 
+concurrency:
+  group: kotlin-build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,6 +25,18 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
+          cache: gradle
+
+      - name: Cache Gradle wrapper + caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            kotlin-src/.gradle
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
 
       - name: Install dependencies
         run: |

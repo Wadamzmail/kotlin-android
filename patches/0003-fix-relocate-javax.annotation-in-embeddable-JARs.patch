@@ -1,4 +1,4 @@
-From 15287ddc629652d48eaaaeed1c6b72e9d5dc9791 Mon Sep 17 00:00:00 2001
+From 31726352002706034f43e21d807774bd48d38511 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Wed, 11 Mar 2026 16:44:52 +0530
 Subject: [PATCH 3/7] fix: relocate javax.annotation in embeddable JARs
@@ -11,10 +11,10 @@ Signed-off-by: Akash Yadav <contact@itsaky.com>
  1 file changed, 1 insertion(+)
 
 diff --git a/repo/gradle-build-conventions/gradle-plugins-common/src/main/kotlin/embeddable.kt b/repo/gradle-build-conventions/gradle-plugins-common/src/main/kotlin/embeddable.kt
-index 0eccd06bc018..f8f8207ddb67 100644
+index f10817407a8f..0abcce0c4fd2 100644
 --- a/repo/gradle-build-conventions/gradle-plugins-common/src/main/kotlin/embeddable.kt
 +++ b/repo/gradle-build-conventions/gradle-plugins-common/src/main/kotlin/embeddable.kt
-@@ -26,6 +26,7 @@ val packagesToRelocate =
+@@ -25,6 +25,7 @@ val packagesToRelocate =
          "net.jpountz",
          "one.util.streamex",
          "it.unimi.dsi.fastutil",

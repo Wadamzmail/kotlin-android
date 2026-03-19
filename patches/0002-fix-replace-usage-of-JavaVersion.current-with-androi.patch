@@ -1,4 +1,4 @@
-From db5b23b30fe1ecffa163ed7ddf5e1b913c03b39e Mon Sep 17 00:00:00 2001
+From 2dc80f890f351be62507dda6217bfb5ff3d402c7 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Wed, 11 Mar 2026 16:41:22 +0530
 Subject: [PATCH 2/7] fix: replace usage of JavaVersion.current() with
@@ -38,10 +38,10 @@ index 00f375e5a091..bd21c23de942 100644
 +    return currentJavaVersion() >= JavaVersion.compose(9)
  }
 diff --git a/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JvmEnvironmentConfigurator.kt b/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JvmEnvironmentConfigurator.kt
-index b5afd9e8241c..9a37947acbfc 100644
+index 99ae3e637228..a1e9037b29fc 100644
 --- a/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JvmEnvironmentConfigurator.kt
 +++ b/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JvmEnvironmentConfigurator.kt
-@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
+@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
  import org.jetbrains.kotlin.test.util.KtTestUtil
  import org.jetbrains.kotlin.test.util.joinToArrayString
  import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -49,7 +49,7 @@ index b5afd9e8241c..9a37947acbfc 100644
  import java.io.File
  
  open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-@@ -147,7 +148,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
+@@ -148,7 +149,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
              TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
              TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
              TestJdkKind.FULL_JDK -> getJdkHomeFromProperty {
@@ -59,10 +59,10 @@ index b5afd9e8241c..9a37947acbfc 100644
          }
  
 diff --git a/compiler/tests-common/testFixtures/org/jetbrains/kotlin/test/KotlinTestUtils.java b/compiler/tests-common/testFixtures/org/jetbrains/kotlin/test/KotlinTestUtils.java
-index 1efa99b5e374..987d00136a71 100644
+index 772c2082ff8f..aca488a7f3b9 100644
 --- a/compiler/tests-common/testFixtures/org/jetbrains/kotlin/test/KotlinTestUtils.java
 +++ b/compiler/tests-common/testFixtures/org/jetbrains/kotlin/test/KotlinTestUtils.java
-@@ -64,6 +64,7 @@ import java.util.regex.Matcher;
+@@ -61,6 +61,7 @@ import java.util.regex.Matcher;
  import java.util.regex.Pattern;
  
  import static org.jetbrains.kotlin.test.InTextDirectivesUtils.*;
@@ -70,7 +70,7 @@ index 1efa99b5e374..987d00136a71 100644
  
  public class KotlinTestUtils {
      public static final String ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT = "Actual data differs from file content";
-@@ -189,7 +190,7 @@ public class KotlinTestUtils {
+@@ -186,7 +187,7 @@ public class KotlinTestUtils {
          else if (jdkKind == TestJdkKind.FULL_JDK_21) {
              configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk21Home());
          }

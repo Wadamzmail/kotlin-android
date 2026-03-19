@@ -1,4 +1,4 @@
-From 473cbbdaf7da4f3dfd1e3295280353d32b129683 Mon Sep 17 00:00:00 2001
+From 33829cfc919803fa5f8f094a0170b33d2bd0a0dd Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Fri, 13 Mar 2026 19:14:18 +0530
 Subject: [PATCH 4/7] feat: add analysis-api-standalone-embeddable-for-ide
@@ -13,10 +13,10 @@ Signed-off-by: Akash Yadav <contact@itsaky.com>
  create mode 100644 prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
 
 diff --git a/build.gradle.kts b/build.gradle.kts
-index d0fcfad11e34..e533405d2674 100644
+index fb9735adfd4f..74e37d391fc4 100644
 --- a/build.gradle.kts
 +++ b/build.gradle.kts
-@@ -495,6 +495,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
+@@ -494,6 +494,7 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
      ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
      ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
      ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",
@@ -109,10 +109,10 @@ index 000000000000..cb6cc097db17
 +    mergeServiceFiles()
 +}
 diff --git a/settings.gradle b/settings.gradle
-index 419121b404d4..fe82972cc9f7 100644
+index 0dd6d8f1a099..f55a9e952354 100644
 --- a/settings.gradle
 +++ b/settings.gradle
-@@ -511,6 +511,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
+@@ -532,6 +532,7 @@ if (!buildProperties.inJpsBuildIdeaSync) {
              ":prepare:ide-plugin-dependencies:analysis-api-platform-interface-for-ide",
              ":prepare:ide-plugin-dependencies:symbol-light-classes-for-ide",
              ":prepare:ide-plugin-dependencies:analysis-api-standalone-for-ide",

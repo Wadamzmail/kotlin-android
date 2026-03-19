@@ -1,4 +1,4 @@
-From 663cde010c8bb8544a2cf8938e4f82116c81968d Mon Sep 17 00:00:00 2001
+From c1ae646efecedd59371695593f29db19170b8d37 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Fri, 13 Mar 2026 19:15:23 +0530
 Subject: [PATCH 5/7] fix: avoid usage of javax.swing

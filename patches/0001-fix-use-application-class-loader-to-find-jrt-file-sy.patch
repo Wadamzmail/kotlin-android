@@ -1,4 +1,4 @@
-From 9c8c38557dcef9184e6f90a96db1affdd88ae5f2 Mon Sep 17 00:00:00 2001
+From e571c9c18c355383a36012601b86dd8a0bd32959 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Wed, 11 Mar 2026 16:39:54 +0530
 Subject: [PATCH 1/7] fix: use application class loader to find jrt:/ file

@@ -1,27 +1,25 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-source "$(dirname "$0")/helpers.sh"
-
-TAG="${1:-}"
-
-[[ -z "$TAG" ]] && fail "usage: $0 <kotlin-release-tag>"
+source "$(dirname "$0")/common.sh"
 
 require_cmd curl
 require_cmd tar
 
-REPO_URL="https://github.com/JetBrains/kotlin/archive/refs/tags/${TAG}.tar.gz"
-ARCHIVE="kotlin-${TAG}.tar.gz"
-SRC_DIR="kotlin-${TAG}"
+if ! [[ -f "$KT_SRC_ARCHIVE" ]]; then
+    log_info "Downloading Kotlin source for version: $KT_VERSION"
+    curl -L "$KT_SRC_URL" -o "$KT_SRC_ARCHIVE"
+else
+    log_info "$KT_SRC_ARCHIVE already exists. Skipping download."
+fi
 
-log_info "Downloading Kotlin source for tag: $TAG"
-curl -L "$REPO_URL" -o "$ARCHIVE"
+checksum="$(sha256sum "$KT_SRC_ARCHIVE")"
+
+[[ "$checksum" != "$KT_SRC_CHECKSUM" ]] || fail "Checksum mismatch: expected=$KT_SRC_CHECKSUM actual=$checksum"
 
 log_info "Extracting archive"
-tar -xzf "$ARCHIVE"
+tar -xz -C "$OUT" -f "$KT_SRC_ARCHIVE"
 
-log_info "Normalizing directory"
-rm -rf kotlin-src
-mv "$SRC_DIR" kotlin-src
+[[ -d "$KT_SRC_DIR" ]] || fail "Kotlin source dir '$KT_SRC_DIR' doesn't exist after extraction!"
 
-log_success "Source ready in ./kotlin-src"
+log_success "Source ready in $KT_SRC_DIR"

@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-source "$(dirname "$0")/helpers.sh"
+source "$(dirname "$0")/common.sh"
 
-require_cmd patch
-
-[[ -d kotlin-src ]] || fail "kotlin-src not found"
-[[ -d patches ]] || fail "patches directory not found"
-
-cd kotlin-src
+[[ -d "$KT_SRC_DIR" ]] || fail "kotlin-src not found"
+[[ -d "$PATCHES_DIR" ]] || fail "patches directory not found"
 
 log_info "Applying patches"
 
-for p in $(find ../patches -type f -name '*.patch' | sort); do
-  log_info "Applying $p"
-  patch -p1 < "../patches/$p"
+require_cmd git
+
+pushd "$KT_SRC_DIR"
+
+for p in $(find "$PATCHES_DIR" -type f -name "*.patch" | sort); do
+  log_info "Applying $p (patch)"
+  patch -p1 <"$p" || fail "patch failed on $p"
 done
+
+popd
 
 log_success "All patches applied"

@@ -69,11 +69,23 @@ jobs:
           VERSION=$(echo "$NAME" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+)-SNAPSHOT.*/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+
+          echo "tag=v${VERSION}-${SHORT_SHA}" >> $GITHUB_OUTPUT
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: kotlin-jar
           path: ${{ steps.meta.outputs.jar }}
+
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+      short_sha: ${{ steps.meta.outputs.short_sha }}
+      name: ${{ steps.meta.outputs.name }}
+      sha256: ${{ steps.meta.outputs.sha256 }}
 
   release:
     needs: build
@@ -81,40 +93,24 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: kotlin-jar
           path: outputs
 
-      - name: Extract metadata
-        id: meta
-        run: |
-          JAR=$(ls out/*.jar | head -n1)
-          NAME=$(basename "$JAR")
-
-          SHA256=$(sha256sum "$JAR" | awk '{print $1}')
-          VERSION=$(echo "$NAME" | sed -E 's/.*-([0-9]+\.[0-9]+\.[0-9]+)-SNAPSHOT.*/\1/')
-
-          echo "jar=$JAR" >> $GITHUB_OUTPUT
-          echo "name=$NAME" >> $GITHUB_OUTPUT
-          echo "sha256=$SHA256" >> $GITHUB_OUTPUT
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.meta.outputs.version }}
-          name: Kotlin ${{ steps.meta.outputs.version }} (patched)
+          tag_name: ${{ needs.build.outputs.tag }}
+          name: Kotlin ${{ needs.build.outputs.version }} (patched)
           body: |
-            Kotlin Version: ${{ steps.meta.outputs.version }}
+            Kotlin Version: ${{ needs.build.outputs.version }}
+            Commit: ${{ needs.build.outputs.short_sha }}
 
-            Artifact: ${{ steps.meta.outputs.name }}
+            Artifact: ${{ needs.build.outputs.name }}
 
-            SHA256: ${{ steps.meta.outputs.sha256 }}
-          files: ${{ steps.meta.outputs.jar }}
+            SHA256: ${{ needs.build.outputs.sha256 }}
+          files: outputs/${{ needs.build.outputs.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

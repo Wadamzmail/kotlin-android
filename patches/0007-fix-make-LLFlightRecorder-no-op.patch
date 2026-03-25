@@ -1,7 +1,7 @@
 From 9ae78fa2e9c0927a5e07d2ae004dbde0519edadd Mon Sep 17 00:00:00 2001
 From: Akash Yadav <akashyadav@appdevforall.org>
 Date: Wed, 18 Mar 2026 21:44:04 +0530
-Subject: [PATCH 7/7] fix: make LLFlightRecorder no-op
+Subject: [PATCH 7/8] fix: make LLFlightRecorder no-op
 
 jdk.jfr is not available on Android.
 

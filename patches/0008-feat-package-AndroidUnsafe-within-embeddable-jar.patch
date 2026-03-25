@@ -1,7 +1,7 @@
 From e20d9c3af823b10fe95dcf414e92c321bc9b330a Mon Sep 17 00:00:00 2001
 From: Akash Yadav <akashyadav@appdevforall.org>
 Date: Wed, 25 Mar 2026 17:25:33 +0530
-Subject: [PATCH 8/9] feat: package AndroidUnsafe within embeddable jar
+Subject: [PATCH 08/10] feat: package AndroidUnsafe within embeddable jar
 
 This also ensures that the usages of Unsafe are already relocated in the JAR file, significantly reducing the build times of consuming projects.
 

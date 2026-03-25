@@ -1,7 +1,7 @@
 From 7084d7c52a41a8262938fde3922d36433b7b6f88 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Fri, 13 Mar 2026 19:15:23 +0530
-Subject: [PATCH 5/9] fix: use SwingUtilities (shim) directly to check for
+Subject: [PATCH 05/10] fix: use SwingUtilities (shim) directly to check for
  application thread
 
 Signed-off-by: Akash Yadav <contact@itsaky.com>

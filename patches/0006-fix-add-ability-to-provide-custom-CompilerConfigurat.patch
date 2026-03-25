@@ -1,8 +1,8 @@
 From 044d6b2568cb6ce1b432ad68307077296b82e0db Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Fri, 13 Mar 2026 19:16:19 +0530
-Subject: [PATCH 6/9] fix: add ability to provide custom CompilerConfiguration
- to StandaloneAnalysisAPISession
+Subject: [PATCH 06/10] fix: add ability to provide custom
+ CompilerConfiguration to StandaloneAnalysisAPISession
 
 Signed-off-by: Akash Yadav <contact@itsaky.com>
 ---

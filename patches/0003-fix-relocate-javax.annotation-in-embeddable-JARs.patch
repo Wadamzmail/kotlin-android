@@ -1,7 +1,7 @@
 From 31726352002706034f43e21d807774bd48d38511 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Wed, 11 Mar 2026 16:44:52 +0530
-Subject: [PATCH 03/10] fix: relocate javax.annotation in embeddable JARs
+Subject: [PATCH 03/11] fix: relocate javax.annotation in embeddable JARs
 
 Classes from the javax.annotation package cause duplicate class errors in Android projects.
 

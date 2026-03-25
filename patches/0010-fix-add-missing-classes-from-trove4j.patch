@@ -1,7 +1,7 @@
 From 7fe5a8092769a44e0e907ec791be4f1b178334ba Mon Sep 17 00:00:00 2001
 From: Akash Yadav <akashyadav@appdevforall.org>
 Date: Wed, 25 Mar 2026 19:10:14 +0530
-Subject: [PATCH 10/10] fix: add missing classes from trove4j
+Subject: [PATCH 10/11] fix: add missing classes from trove4j
 
 Signed-off-by: Akash Yadav <akashyadav@appdevforall.org>
 ---

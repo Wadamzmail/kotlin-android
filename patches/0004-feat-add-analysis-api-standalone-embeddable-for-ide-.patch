@@ -1,7 +1,7 @@
 From 6c16fb3d36855b3499ab858379bade4a755c0c91 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Fri, 13 Mar 2026 19:14:18 +0530
-Subject: [PATCH 04/12] feat: add analysis-api-standalone-embeddable-for-ide
+Subject: [PATCH 04/13] feat: add analysis-api-standalone-embeddable-for-ide
  module
 
 Signed-off-by: Akash Yadav <contact@itsaky.com>

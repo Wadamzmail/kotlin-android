@@ -1,7 +1,7 @@
 From cfb1cb53049bb363933586c28214c230e5e8e551 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <akashyadav@appdevforall.org>
 Date: Wed, 25 Mar 2026 20:26:23 +0530
-Subject: [PATCH 11/11] fix: add shim for IntelliJCoroutines
+Subject: [PATCH 11/12] fix: add shim for IntelliJCoroutines
 
 Signed-off-by: Akash Yadav <akashyadav@appdevforall.org>
 ---

@@ -1,7 +1,7 @@
 From e571c9c18c355383a36012601b86dd8a0bd32959 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <contact@itsaky.com>
 Date: Wed, 11 Mar 2026 16:39:54 +0530
-Subject: [PATCH 01/11] fix: use application class loader to find jrt:/ file
+Subject: [PATCH 01/12] fix: use application class loader to find jrt:/ file
  system
 
 The JRT file system is not available on Android. It needs to be part of the application. To ensure Kotlin's CoreJrtFileSystem can find that file system, we need to make it use the application class loader so that it finds the jrt:/ file system in the application's classes, not in the system's loader

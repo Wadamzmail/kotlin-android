@@ -1,0 +1,62 @@
+From 20ffff74e685599daac723958a483ac7f4203890 Mon Sep 17 00:00:00 2001
+From: Akash Yadav <akashyadav@appdevforall.org>
+Date: Wed, 25 Mar 2026 20:26:23 +0530
+Subject: [PATCH 11/11] fix: add shim for IntelliJCoroutines
+
+Signed-off-by: Akash Yadav <akashyadav@appdevforall.org>
+---
+ .../android-shims/build.gradle.kts            |  1 +
+ .../internal/intellij/IntelliJCoroutines.kt   | 29 +++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+ create mode 100644 prepare/ide-plugin-dependencies/android-shims/src/main/java/kotlinx/coroutines/internal/intellij/IntelliJCoroutines.kt
+
+diff --git a/prepare/ide-plugin-dependencies/android-shims/build.gradle.kts b/prepare/ide-plugin-dependencies/android-shims/build.gradle.kts
+index 07633a92595e..8dbcf1627d3f 100644
+--- a/prepare/ide-plugin-dependencies/android-shims/build.gradle.kts
++++ b/prepare/ide-plugin-dependencies/android-shims/build.gradle.kts
+@@ -54,6 +54,7 @@ dependencies {
+     compileOnly(commonDependency("com.google.android", "android"))
+     compileOnly(intellijCore())
+     compileOnly(files(hiddenapibypassClassesJar).builtBy(extractHiddenapibypass))
++    compileOnly(libs.kotlinx.coroutines.core)
+ 
+     val httpClientVersion = libs.versions.http.client.get()
+     val jsonVersion = libs.versions.json.get()
+diff --git a/prepare/ide-plugin-dependencies/android-shims/src/main/java/kotlinx/coroutines/internal/intellij/IntelliJCoroutines.kt b/prepare/ide-plugin-dependencies/android-shims/src/main/java/kotlinx/coroutines/internal/intellij/IntelliJCoroutines.kt
+new file mode 100644
+index 000000000000..2a8f2adac5f6
+--- /dev/null
++++ b/prepare/ide-plugin-dependencies/android-shims/src/main/java/kotlinx/coroutines/internal/intellij/IntelliJCoroutines.kt
+@@ -0,0 +1,29 @@
++// Copyright 2000-2025 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license.
++package kotlinx.coroutines.internal.intellij
++
++import kotlinx.coroutines.CoroutineScope
++import kotlinx.coroutines.runBlocking
++import kotlin.coroutines.CoroutineContext
++import kotlin.time.Duration
++
++/**
++ * Some clients of IntelliJ Platform (like Kotlin Compiler) do now want to depend on IJ's form of Kotlin coroutines
++ * Therefore, we proxy [kotlinx.coroutines.internal.intellij.IntellijCoroutines] by introducing a set of no-op methods
++ */
++object IntelliJCoroutines {
++
++    fun currentThreadCoroutineContext(): CoroutineContext? = null
++
++    @Throws(InterruptedException::class)
++    fun <T> runBlockingWithParallelismCompensation(
++        context: CoroutineContext,
++        block: suspend CoroutineScope.() -> T,
++    ): T {
++        @Suppress("RAW_RUN_BLOCKING")
++        return runBlocking(context, block)
++    }
++
++    fun <T> runAndCompensateParallelism(timeout: Duration, action: () -> T): T {
++        return action()
++    }
++}
+-- 
+2.53.0
+

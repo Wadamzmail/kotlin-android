@@ -1,10 +1,14 @@
-From 7084d7c52a41a8262938fde3922d36433b7b6f88 Mon Sep 17 00:00:00 2001
-From: Akash Yadav <contact@itsaky.com>
-Date: Fri, 13 Mar 2026 19:15:23 +0530
-Subject: [PATCH 05/13] fix: use SwingUtilities (shim) directly to check for
- application thread
+From fb5bacc5a4700c2b24405103e6553403f4433cec Mon Sep 17 00:00:00 2001
+From: Akash Yadav <akashyadav@appdevforall.org>
+Date: Thu, 26 Mar 2026 14:37:27 +0530
+Subject: [PATCH 7/7] fix: use shimmed SwingUtilities directly to check for
+ event dispatcher thread
 
-Signed-off-by: Akash Yadav <contact@itsaky.com>
+Since we already have a shimmed SwingUtilities class compatible with
+Android runtime, we can use it directly instead of the going the MockApplication
+way, which may change and break things.
+
+Signed-off-by: Akash Yadav <akashyadav@appdevforall.org>
 ---
  .../impl/base/permissions/KaBaseAnalysisPermissionChecker.kt  | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)

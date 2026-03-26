@@ -1,9 +1,10 @@
-From 797b38a8271a02f3656d60056bd80f79cc8b7798 Mon Sep 17 00:00:00 2001
+From fe62ad87066ffb1715a54832967520bd8718e4b3 Mon Sep 17 00:00:00 2001
 From: Akash Yadav <akashyadav@appdevforall.org>
-Date: Wed, 18 Mar 2026 21:44:04 +0530
-Subject: [PATCH 07/13] fix: make LLFlightRecorder no-op
+Date: Thu, 26 Mar 2026 14:24:37 +0530
+Subject: [PATCH 4/7] fix: make LLFlightRecorder no-op on Android
 
-jdk.jfr is not available on Android.
+LLFlightRecorder makes use of jdk.jfr classes, which are
+not available on Android.
 
 Signed-off-by: Akash Yadav <akashyadav@appdevforall.org>
 ---

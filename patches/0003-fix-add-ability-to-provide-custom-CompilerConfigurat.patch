@@ -1,10 +1,15 @@
-From 044d6b2568cb6ce1b432ad68307077296b82e0db Mon Sep 17 00:00:00 2001
-From: Akash Yadav <contact@itsaky.com>
-Date: Fri, 13 Mar 2026 19:16:19 +0530
-Subject: [PATCH 06/13] fix: add ability to provide custom
- CompilerConfiguration to StandaloneAnalysisAPISession
+From f3f37dd26a82b0c265c9b13db64f1fdb98f08892 Mon Sep 17 00:00:00 2001
+From: Akash Yadav <akashyadav@appdevforall.org>
+Date: Thu, 26 Mar 2026 14:22:09 +0530
+Subject: [PATCH 3/7] fix: add ability to provide custom CompilerConfiguration
+ to StandaloneAnalysisAPISessionBuilder
 
-Signed-off-by: Akash Yadav <contact@itsaky.com>
+On Android, we need to alter the CompilerConfiguration to override
+JVM-specific assumptions. For example, we need to change the
+intellijPluginRoot on Android to point to the base.apk file of the
+host Android application.
+
+Signed-off-by: Akash Yadav <akashyadav@appdevforall.org>
 ---
  .../api/standalone/StandaloneAnalysisAPISessionBuilder.kt     | 4 ++++
  1 file changed, 4 insertions(+)

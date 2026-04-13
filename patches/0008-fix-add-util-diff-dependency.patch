@@ -1,0 +1,25 @@
+From ba155828bbf1146298fc0fdad9ff8f82c3c4d8e0 Mon Sep 17 00:00:00 2001
+From: Akash Yadav <akashyadav@appdevforall.org>
+Date: Tue, 14 Apr 2026 01:04:17 +0530
+Subject: [PATCH 8/8] fix: add util-diff dependency
+
+Signed-off-by: Akash Yadav <akashyadav@appdevforall.org>
+---
+ .../analysis-api-standalone-embeddable-for-ide/build.gradle.kts  | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts b/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
+index a1dffb3abc9f..9831823e735d 100644
+--- a/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
++++ b/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
+@@ -27,6 +27,7 @@ dependencies {
+     embeddableJar(project(":analysis:analysis-api-standalone"))
+     embeddableJar(project(":prepare:ide-plugin-dependencies:android-shims"))
+     embeddableJar(commonDependency("one.util:streamex"))
++    embeddableJar("com.jetbrains.intellij.platform:util-diff:$intellijVersion") { isTransitive = false }
+ }
+ 
+ val packagesToRelocate =
+-- 
+2.53.0
+

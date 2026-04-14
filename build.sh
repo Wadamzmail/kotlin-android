@@ -11,7 +11,7 @@ require_cmd ./gradlew
 TASK=":prepare:ide-plugin-dependencies:analysis-api-standalone-embeddable-for-ide:embeddable"
 
 log_info "Running Gradle task"
-./gradlew "$TASK"
+./gradlew "$TASK" --dependency-verification=off
 
 log_info "Locating built JAR"
 

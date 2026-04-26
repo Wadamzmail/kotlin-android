@@ -15,7 +15,7 @@ index cb6cc097db17d..84bda19fad2c0 100644
      embeddableJar(project(":analysis:analysis-api-standalone"))
      embeddableJar(project(":prepare:ide-plugin-dependencies:android-shims"))
      embeddableJar(commonDependency("one.util:streamex"))
-    embeddableJar("com.jetbrains.intellij.platform:util-diff:$intellijVersion") { isTransitive = false }
+     embeddableJar("com.jetbrains.intellij.platform:util-diff:$intellijVersion") { isTransitive = false }
 +    //trying to make it Compiler Embeddable
 +    embeddableJar(project(":compiler:incremental-compilation-impl",))
  }

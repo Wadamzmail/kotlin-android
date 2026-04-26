@@ -19,7 +19,3 @@ index cb6cc097db17d..84bda19fad2c0 100644
 +    //trying to make it Compiler Embeddable
 +    embeddableJar(project(":compiler:incremental-compilation-impl",))
  }
-
- val packagesToRelocate =
--- 
-2.53.0

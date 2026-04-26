@@ -11,12 +11,15 @@ diff --git a/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-
 index cb6cc097db17d..84bda19fad2c0 100644
 --- a/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
 +++ b/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
-@@ -25,6 +25,8 @@ dependencies {
-     embeddableJar(project(":analysis:analysis-api-standalone:analysis-api-standalone-base",))
-     embeddableJar(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",))
-     embeddableJar(project(":analysis:analysis-api-standalone",))
+@@ -27,6 +27,7 @@ dependencies {
+     embeddableJar(project(":analysis:analysis-api-standalone"))
+     embeddableJar(project(":prepare:ide-plugin-dependencies:android-shims"))
+     embeddableJar(commonDependency("one.util:streamex"))
++    embeddableJar("com.jetbrains.intellij.platform:util-diff:$intellijVersion") { isTransitive = false }
 +    //trying to make it Compiler Embeddable
 +    embeddableJar(project(":compiler:incremental-compilation-impl",))
  }
- 
+
  val packagesToRelocate =
+-- 
+2.53.0

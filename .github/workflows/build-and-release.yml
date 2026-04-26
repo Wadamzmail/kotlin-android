@@ -78,6 +78,12 @@ jobs:
           name: kotlin-jar
           path: ${{ steps.meta.outputs.jar }}
 
+      - name: Upload artifacts2
+        uses: actions/upload-artifact@v4
+        with:
+         name: kotlin-output
+         path: kotlin-src/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
+
     outputs:
       tag: ${{ steps.meta.outputs.tag }}
       version: ${{ steps.meta.outputs.version }}

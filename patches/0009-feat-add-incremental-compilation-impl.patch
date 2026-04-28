@@ -1,0 +1,24 @@
+From 74ce850cfb3e7a3dc9dd179b79dfc381566e8437 Mon Sep 17 00:00:00 2001
+From: Wadamzmail <alksndrmetwakil@gmail.com>
+Date: Tue, 28 Apr 2026 07:44:01 +0200
+Subject: [PATCH] 0009 feat add incremental compilation impl
+
+---
+ .../analysis-api-standalone-embeddable-for-ide/build.gradle.kts  | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts b/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
+index 9831823..d21dab6 100644
+--- a/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
++++ b/prepare/ide-plugin-dependencies/analysis-api-standalone-embeddable-for-ide/build.gradle.kts
+@@ -28,6 +28,7 @@ dependencies {
+     embeddableJar(project(":prepare:ide-plugin-dependencies:android-shims"))
+     embeddableJar(commonDependency("one.util:streamex"))
+     embeddableJar("com.jetbrains.intellij.platform:util-diff:$intellijVersion") { isTransitive = false }
++    embeddableJar(project(":compiler:incremental-compilation-impl"))
+ }
+ 
+ val packagesToRelocate =
+-- 
+2.52.0
+

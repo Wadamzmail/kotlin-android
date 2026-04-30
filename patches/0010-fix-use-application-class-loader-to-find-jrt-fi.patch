@@ -1,0 +1,26 @@
+From 66593fb4e98cf2184ba9f6dc11863ed238b49570 Mon Sep 17 00:00:00 2001
+From: Wadamzmail <alksndrmetwakil@gmail.com>
+Date: Thu, 30 Apr 2026 10:40:26 +0200
+Subject: [PATCH] 0010 fix: use application class loader to find jrt:/ file 
+ system 2
+
+---
+ .../org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
+index c399ca5..6ad2906 100644
+--- a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
++++ b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
+@@ -89,7 +89,7 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
+                 // If the runtime JDK is set to <9, there are no JrtFileSystemProvider,
+                 // we should create classloader with jrt-fs.jar, and DO NOT NEED to pass "java.home" path,
+                 // as otherwise it will incur additional classloader creation
+-                FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
++                FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), CoreJrtFileSystem::class.java.classLoader)
+             }
+         }
+     }
+-- 
+2.52.0
+

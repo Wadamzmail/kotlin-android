@@ -1,0 +1,81 @@
+From 4423672fb0cc482674bcda6b7c260ec4551fe352 Mon Sep 17 00:00:00 2001
+From: Wadamzmail <alksndrmetwakil@gmail.com>
+Date: Thu, 30 Apr 2026 10:27:10 +0200
+Subject: [PATCH] fix use application class loader to find jrt file system
+
+---
+ .../cli/jvm/modules/CoreJrtFileSystem.kt      |  4 +--
+ .../cli/jvm/modules/javaVersionUtils.kt       |  3 ++-
+ .../jetbrains/kotlin/utils/JavaVersionUtil.kt | 26 +++++++++++++++++++
+ 3 files changed, 30 insertions(+), 3 deletions(-)
+ create mode 100644 compiler/util/src/org/jetbrains/kotlin/utils/JavaVersionUtil.kt
+
+diff --git a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
+index 335a4db..6ad2906 100644
+--- a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
++++ b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/CoreJrtFileSystem.kt
+@@ -83,13 +83,13 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
+             if (isAtLeastJava9()) {
+                 // If the runtime JDK is set to 9+ it has JrtFileSystemProvider,
+                 // but to load proper jrt-fs (one that is pointed by jdkHome) we should provide "java.home" path
+-                FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
++                FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath), CoreJrtFileSystem::class.java.classLoader)
+             } else {
+                 val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
+                 // If the runtime JDK is set to <9, there are no JrtFileSystemProvider,
+                 // we should create classloader with jrt-fs.jar, and DO NOT NEED to pass "java.home" path,
+                 // as otherwise it will incur additional classloader creation
+-                FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
++                FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), CoreJrtFileSystem::class.java.classLoader)
+             }
+         }
+     }
+diff --git a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/javaVersionUtils.kt b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/javaVersionUtils.kt
+index 00f375e..bd21c23 100644
+--- a/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/javaVersionUtils.kt
++++ b/compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/modules/javaVersionUtils.kt
+@@ -6,7 +6,8 @@
+ package org.jetbrains.kotlin.cli.jvm.modules
+ 
+ import com.intellij.util.lang.JavaVersion
++import org.jetbrains.kotlin.utils.currentJavaVersion
+ 
+ fun isAtLeastJava9(): Boolean {
+-    return JavaVersion.current() >= JavaVersion.compose(9)
++    return currentJavaVersion() >= JavaVersion.compose(9)
+ }
+diff --git a/compiler/util/src/org/jetbrains/kotlin/utils/JavaVersionUtil.kt b/compiler/util/src/org/jetbrains/kotlin/utils/JavaVersionUtil.kt
+new file mode 100644
+index 0000000..7fa8aa0
+--- /dev/null
++++ b/compiler/util/src/org/jetbrains/kotlin/utils/JavaVersionUtil.kt
+@@ -0,0 +1,26 @@
++/*
++ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
++ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
++ */
++
++package org.jetbrains.kotlin.utils
++
++import com.intellij.util.lang.JavaVersion
++
++private val androidJavaVersion by lazy { androidJavaVersion() }
++
++fun currentJavaVersion(): JavaVersion =
++    androidJavaVersion ?: JavaVersion.current()
++
++fun androidJavaVersion(): JavaVersion? =
++    runCatching {
++        val buildClass = Class.forName($$"android.os.Build$VERSION")
++        val sdkInt = buildClass.getField("SDK_INT").getInt(null)
++        val featureVersion = when {
++            sdkInt >= 34 -> 17
++            sdkInt >= 31 -> 11
++            else -> 8
++        }
++
++        JavaVersion.compose(featureVersion)
++    }.getOrNull()
+-- 
+2.52.0
+

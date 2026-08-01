@@ -93,7 +93,7 @@ jobs:
     runs-on: ubuntu-latest
     if: >
       github.event_name == 'push' &&
-      github.repository == 'appdevforall/kotlin-android' &&
+      github.repository == 'Wadamzmail/kotlin-android' &&
       github.ref == 'refs/heads/main'
 
     steps:
